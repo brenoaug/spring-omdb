@@ -8,8 +8,6 @@ import java.net.http.HttpResponse;
 
 public class ConsumoAPI {
 
-    private final HttpClient client = HttpClient.newHttpClient();
-
     private final String apiOmdb;
 
     public ConsumoAPI() {
@@ -19,30 +17,53 @@ public class ConsumoAPI {
         }
     }
 
-    public String obterDados(String serie, int season) {
-        String baseUrl = "http://www.omdbapi.com/?t=";
-        String urlComplete = serie + "&Season=" + season + "&apikey=" + apiOmdb;
-
+    public String obterDadosSerie(String serie) {
+        String host = "http://www.omdbapi.com/?";
+        String title = "t=" + serie;
+        String apiKey = "&apikey=" + apiOmdb;
 
         HttpClient client = HttpClient.newHttpClient();
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(baseUrl + urlComplete))
+                .uri(URI.create(host + title + apiKey))
                 .GET()
                 .header("Accept", "application/json")
                 .build();
 
-        HttpResponse<String> response = null;
+        HttpResponse<String> response;
         try {
             response = client
                     .send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
 
-        String json = response.body();
-        return json;
+        return response.body();
+    }
+
+    public String obterDadosEpisodio(String serie, int numberSeason, int numberEpisode) {
+        String host = "http://www.omdbapi.com/?";
+        String title = "t=" + serie;
+        String season = "&season=" + numberSeason;
+        String episode = "&episode=" + numberEpisode;
+        String apiKey = "&apikey=" + apiOmdb;
+
+        HttpClient client = HttpClient.newHttpClient();
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(host + title + season + episode + apiKey))
+                .GET()
+                .header("Accept", "application/json")
+                .build();
+
+        HttpResponse<String> response;
+        try {
+            response = client
+                    .send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        return response.body();
     }
 }
