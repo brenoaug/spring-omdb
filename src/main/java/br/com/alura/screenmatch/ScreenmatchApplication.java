@@ -17,11 +17,12 @@ public class ScreenmatchApplication implements CommandLineRunner {
     public void run(@SuppressWarnings("NullableProblems") String[] args) {
         Menu menu = new Menu();
         menu.pegandoAApiKeyDoUsuario();
-        menu.buscarSerie();
-        System.out.println(" ");
-        menu.buscarTodasTemporadas();
-        System.out.println(" ");
-        menu.buscarEpisodio();
+//        menu.buscarSerie();
+//        System.out.println(" ");
+//        menu.buscarTodasTemporadas();
+//        System.out.println(" ");
+//        menu.buscarEpisodio();
+        menu.buscarTodosEpisodios();
 
 //
 //
