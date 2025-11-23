@@ -1,5 +1,7 @@
 package br.com.alura.screenmatch.service;
 
+import br.com.alura.screenmatch.view.Menu;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -8,11 +10,11 @@ import java.net.http.HttpResponse;
 
 public class ConsumoAPI {
 
-    private final String apiOmdb;
-
-    public ConsumoAPI() {
-        this.apiOmdb = System.getenv("OMDB_API_KEY");
-        if (apiOmdb == null || apiOmdb.isBlank()) {
+    //private final String apiOmdb;
+    private String apiKeyUser;
+    public ConsumoAPI(String apiKey) {
+        this.apiKeyUser = apiKey;
+        if (apiKeyUser == null || apiKeyUser.isBlank()) {
             throw new IllegalStateException("Variável de ambiente OMDB_API_KEY não definida");
         }
     }
@@ -20,7 +22,7 @@ public class ConsumoAPI {
     public String obterDadosSerie(String serie) {
         String host = "http://www.omdbapi.com/?";
         String title = "t=" + serie;
-        String apiKey = "&apikey=" + apiOmdb;
+        String apiKey = "&apikey=" + this.apiKeyUser;
 
         HttpClient client = HttpClient.newHttpClient();
 
@@ -46,7 +48,7 @@ public class ConsumoAPI {
         String title = "t=" + serie;
         String season = "&season=" + numberSeason;
         String episode = "&episode=" + numberEpisode;
-        String apiKey = "&apikey=" + apiOmdb;
+        String apiKey = "&apikey=" + apiKeyUser;
 
         HttpClient client = HttpClient.newHttpClient();
 
@@ -71,7 +73,7 @@ public class ConsumoAPI {
         String host = "http://www.omdbapi.com/?";
         String title = "t=" + serie;
         String season = "&season=" + numberSeason;
-        String apiKey = "&apikey=" + apiOmdb;
+        String apiKey = "&apikey=" + apiKeyUser;
 
         HttpClient client = HttpClient.newHttpClient();
 
