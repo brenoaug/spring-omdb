@@ -66,4 +66,29 @@ public class ConsumoAPI {
 
         return response.body();
     }
+
+    public String obterDadosTemporada(String serie, int numberSeason) {
+        String host = "http://www.omdbapi.com/?";
+        String title = "t=" + serie;
+        String season = "&season=" + numberSeason;
+        String apiKey = "&apikey=" + apiOmdb;
+
+        HttpClient client = HttpClient.newHttpClient();
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(host + title + season + apiKey))
+                .GET()
+                .header("Accept", "application/json")
+                .build();
+
+        HttpResponse<String> response;
+        try {
+            response = client
+                    .send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        return response.body();
+    }
 }

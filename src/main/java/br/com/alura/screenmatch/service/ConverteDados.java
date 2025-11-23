@@ -15,13 +15,4 @@ public class ConverteDados implements IConverteDados {
         }
     }
 
-    @Override
-    public <T> T obterDadosEpisodio(String json, Class<T> classe) {
-        try {
-            return mapper.readValue(json, classe);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
 }
