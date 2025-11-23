@@ -19,7 +19,7 @@ public class ConsumoAPI {
         }
     }
 
-    public String obterDados(String serie, int season) throws IOException, InterruptedException {
+    public String obterDados(String serie, int season) {
         String baseUrl = "http://www.omdbapi.com/?t=";
         String urlComplete = serie + "&Season=" + season + "&apikey=" + apiOmdb;
 
@@ -32,7 +32,7 @@ public class ConsumoAPI {
                 .header("Accept", "application/json")
                 .build();
 
-        HttpResponse<String> response;
+        HttpResponse<String> response = null;
         try {
             response = client
                     .send(request, HttpResponse.BodyHandlers.ofString());
