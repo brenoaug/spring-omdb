@@ -1,7 +1,5 @@
 package br.com.alura.screenmatch.service;
 
-import br.com.alura.screenmatch.view.Menu;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -11,7 +9,7 @@ import java.net.http.HttpResponse;
 public class ConsumoAPI {
 
     //private final String apiOmdb;
-    private String apiKeyUser;
+    private final String apiKeyUser;
     public ConsumoAPI(String apiKey) {
         this.apiKeyUser = apiKey;
         if (apiKeyUser == null || apiKeyUser.isBlank()) {
