@@ -3,12 +3,14 @@ package br.com.alura.screenmatch.view;
 import br.com.alura.screenmatch.model.DadosEpisodio;
 import br.com.alura.screenmatch.model.DadosSerie;
 import br.com.alura.screenmatch.model.DadosTemporada;
+import br.com.alura.screenmatch.model.Episodio;
 import br.com.alura.screenmatch.service.ConsumoAPI;
 import br.com.alura.screenmatch.service.ConverteDados;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class Menu {
@@ -104,15 +106,9 @@ public class Menu {
                 .mapToObj(i -> conversor.obterDadosSerie(consumoAPI.obterDadosTemporada(nomeDaSerie, i), DadosTemporada.class))
                 .toList();
 
-        List<DadosEpisodio> dadosEpisodios = temporadas.stream()
-                .flatMap(t -> t.listaEpisodios().stream())
-                .toList();
+        List<Episodio> episodios = temporadas.stream()
+                .flatMap(t -> t.listaEpisodios().stream().map(d -> new Episodio(t.numeroTemporada(), d))).toList();
 
-        dadosEpisodios.stream()
-                .filter(e -> !e.avaliacao().equals("N/A"))
-                .sorted(Comparator.comparing(DadosEpisodio::avaliacao)
-                        .reversed())
-                .limit(5)
-                .forEach(System.out::println);
+        episodios.forEach(System.out::println);
     }
 }
