@@ -7,6 +7,7 @@ import br.com.alura.screenmatch.model.Episodio;
 import br.com.alura.screenmatch.service.ConsumoAPI;
 import br.com.alura.screenmatch.service.ConverteDados;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.IntStream;
@@ -78,7 +79,7 @@ public class Menu {
 
     }
 
-    public void buscarTodosEpisodios() {
+    public void buscarMelhoresEpisodios() {
         System.out.println("Digite o nome da Serie: ");
         String nomeDaSerie = sc.nextLine().toLowerCase().replace(" ", "+");
 
@@ -89,10 +90,19 @@ public class Menu {
                 .mapToObj(i -> conversor.obterDadosSerie(consumoAPI.obterDadosTemporada(nomeDaSerie, i), DadosTemporada.class))
                 .toList();
 
-        temporadas.forEach(t -> t.listaEpisodios().forEach(e -> System.out.println(e.tituloEpisodio())));
+        List<DadosEpisodio> dadosEpisodios = temporadas.stream()
+                .flatMap(t -> t.listaEpisodios().stream())
+                .toList();
+
+        dadosEpisodios.stream()
+                .filter(e -> !e.avaliacao().equals("N/A"))
+                .sorted(Comparator.comparing(DadosEpisodio::avaliacao)
+                        .reversed())
+                .limit(5)
+                .forEach(System.out::println);
     }
 
-    public void buscarMelhoresEpisodios() {
+    public void buscarTodosEpisodios() {
         System.out.println("Digite o nome da Serie: ");
         String nomeDaSerie = sc.nextLine().toLowerCase().replace(" ", "+");
 
