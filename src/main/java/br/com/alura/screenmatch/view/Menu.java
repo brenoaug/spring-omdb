@@ -11,6 +11,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class Menu {
     private final Scanner sc = new Scanner(System.in);
@@ -90,16 +91,36 @@ public class Menu {
                 .mapToObj(i -> conversor.obterDadosSerie(consumoAPI.obterDadosTemporada(nomeDaSerie, i), DadosTemporada.class))
                 .toList();
 
-        List<DadosEpisodio> dadosEpisodios = temporadas.stream()
-                .flatMap(t -> t.listaEpisodios().stream())
+        List<Episodio> episodios = temporadas.stream()
+                .flatMap(t -> t.listaEpisodios()
+                        .stream()
+                        .map(e -> new Episodio(t.numeroTemporada(), e)))
+                        .sorted(Comparator.comparing(Episodio::getAvaliacao).reversed())
+                        .limit(5)
+                        .toList();
+
+        episodios.forEach(System.out::println);
+    }
+
+    public void buscarMelhoresEpisodiosDeCadaTemporada() {
+        System.out.println("Digite o nome da Serie: ");
+        String nomeDaSerie = sc.nextLine().toLowerCase().replace(" ", "+");
+
+        var dadosDaSerie = consumoAPI.obterDadosSerie(nomeDaSerie);
+        DadosSerie dadosSerie = conversor.obterDadosSerie(dadosDaSerie, DadosSerie.class);
+
+        List<DadosTemporada> temporadas = IntStream.rangeClosed(1, dadosSerie.totalTemporadas())
+                .mapToObj(i -> conversor.obterDadosSerie(consumoAPI.obterDadosTemporada(nomeDaSerie, i), DadosTemporada.class))
                 .toList();
 
-        dadosEpisodios.stream()
-                .filter(e -> !e.avaliacao().equals("N/A"))
-                .sorted(Comparator.comparing(DadosEpisodio::avaliacao)
-                        .reversed())
-                .limit(5)
-                .forEach(System.out::println);
+        Stream<Episodio> episodios = temporadas.stream()
+                .flatMap(t -> t.listaEpisodios().stream().toList().stream()
+                        .map(e -> new Episodio(t.numeroTemporada(), e))
+                        .sorted(Comparator.comparing(Episodio::getAvaliacao)
+                                .reversed())
+                        .limit(5));
+
+        episodios.forEach(System.out::println);
     }
 
     public void buscarTodosEpisodios() {
@@ -115,7 +136,9 @@ public class Menu {
                 .toList();
 
         List<Episodio> episodios = temporadas.stream()
-                .flatMap(t -> t.listaEpisodios().stream().map(d -> new Episodio(t.numeroTemporada(), d))).toList();
+                .flatMap(t -> t.listaEpisodios().stream()
+                        .map(d -> new Episodio(t.numeroTemporada(), d)))
+                .toList();
 
         episodios.forEach(System.out::println);
     }
