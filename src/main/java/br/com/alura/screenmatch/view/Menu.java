@@ -1,9 +1,6 @@
 package br.com.alura.screenmatch.view;
 
-import br.com.alura.screenmatch.model.DadosEpisodio;
-import br.com.alura.screenmatch.model.DadosSerie;
-import br.com.alura.screenmatch.model.DadosTemporada;
-import br.com.alura.screenmatch.model.Episodio;
+import br.com.alura.screenmatch.model.*;
 import br.com.alura.screenmatch.service.ConsumoAPI;
 import br.com.alura.screenmatch.service.ConverteDados;
 
@@ -32,6 +29,7 @@ public class Menu {
         var dadosDaSerie = consumoAPI.obterDadosSerie(nomeDaSerie);
 
         DadosSerie dadosSerie = conversor.obterDadosSerie(dadosDaSerie, DadosSerie.class);
+
         System.out.println(dadosSerie);
     }
 
@@ -59,7 +57,9 @@ public class Menu {
 
         var dadosDaTemporada = consumoAPI.obterDadosTemporada(nomeDaSerie, numeroDaTemporada);
         DadosTemporada dadosTemporada = conversor.obterDadosSerie(dadosDaTemporada, DadosTemporada.class);
-        System.out.println(dadosTemporada);
+
+        Temporada temporada = new Temporada(nomeDaSerie.replace("+", " "), dadosTemporada);
+        System.out.println(temporada);
     }
 
     public void buscarTodasTemporadasComTodosEpisodios() {
@@ -88,15 +88,19 @@ public class Menu {
         DadosSerie dadosSerie = conversor.obterDadosSerie(dadosDaSerie, DadosSerie.class);
 
         List<DadosTemporada> temporadas = IntStream.rangeClosed(1, dadosSerie.totalTemporadas())
-                .mapToObj(i -> conversor.obterDadosSerie(consumoAPI.obterDadosTemporada(nomeDaSerie, i), DadosTemporada.class))
+                .mapToObj(t -> conversor.obterDadosSerie(consumoAPI.obterDadosTemporada(nomeDaSerie, t), DadosTemporada.class))
                 .toList();
 
         List<Episodio> episodios = temporadas.stream()
                 .flatMap(t -> t.listaEpisodios()
                         .stream()
+                        .peek(e -> System.out.println("Processando temporada " + t.numeroTemporada() + " episodio " + e.numeroEpisodio()))
                         .map(e -> new Episodio(t.numeroTemporada(), e)))
+                        .peek(ep -> System.out.println("Episodio: " + ep.getTituloEpisodio() + " Avaliação: " + ep.getAvaliacao()))
                         .sorted(Comparator.comparing(Episodio::getAvaliacao).reversed())
-                        .limit(5)
+                        .peek(ep -> System.out.println("Episodio ordenado: " + ep.getTituloEpisodio() + " Avaliação: " + ep.getAvaliacao()))
+                        .limit(3)
+                .peek(ep -> System.out.println("Episodio final: " + ep.getTituloEpisodio() + " Avaliação: " + ep.getAvaliacao()))
                         .toList();
 
         episodios.forEach(System.out::println);
